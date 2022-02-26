@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<data>
+    <definition id="btn" width="90" height="20" />
+
+    <button id="butt_0" label="Click Key" use_def="btn">
+        <anchor x="3%" x-flush="left" />
+        <param type="int" value="0" />
+    </button>
+    <button id="butt_1" label="Left Key" use_def="btn">
+        <anchor x="3%" x-flush="left" />
+        <param type="int" value="1" />
+    </button>
+    <button id="butt_2" label="Up Key" use_def="btn">
+        <anchor x="3%" x-flush="left" />
+        <param type="int" value="2" />
+    </button>
+    <button id="butt_3" label="Right Key" use_def="btn">
+        <anchor x="3%" x-flush="left" />
+        <param type="int" value="3" />
+    </button>
+    <button id="butt_4" label="Down Key" use_def="btn">
+        <anchor x="3%" x-flush="left" />
+        <param type="int" value="4" />
+    </button>
+    <button id="butt_5" label="Back" use_def="btn">
+        <anchor x="3%" x-flush="left" />
+        <param type="int" value="5" />
+    </button>
+
+    <align axis="vertical">
+        <objects value="butt_0,butt_1,butt_2,butt_3,butt_4,butt_5" />
+        <bounds top="20%" bottom="75%" />
+    </align>
+
+    <text id="game_title" x="3%" y="3%" align="left" width="20%" color="0xFFFFFF" text="Tiny Busters - Controls" />
+</data>

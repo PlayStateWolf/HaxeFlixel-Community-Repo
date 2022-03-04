@@ -15,11 +15,11 @@ class ApplicationMain
 	#if !macro
 	public static function main()
 	{
-		lime.system.System.__registerEntryPoint("FlxProject", create);
+		lime.system.System.__registerEntryPoint("FroggeHell", create);
 
 		#if (js && html5)
 		#if (munit || utest)
-		lime.system.System.embed("FlxProject", null, 640, 480);
+		lime.system.System.embed("FroggeHell", null, 288, 216);
 		#end
 		#else
 		create(null);
@@ -32,10 +32,10 @@ class ApplicationMain
 
 		ManifestResources.init(config);
 
-		app.meta["build"] = "1";
-		app.meta["company"] = "HaxeFlixel";
-		app.meta["file"] = "FlxProject";
-		app.meta["name"] = "FlxProject";
+		app.meta["build"] = "8";
+		app.meta["company"] = "null";
+		app.meta["file"] = "FroggeHell";
+		app.meta["name"] = "Frogge Hell";
 		app.meta["packageName"] = "com.example.myapp";
 		app.meta["version"] = "0.0.1";
 
@@ -51,14 +51,14 @@ class ApplicationMain
 			element: null,
 			frameRate: 60,
 			#if !web fullscreen: false, #end
-			height: 480,
+			height: 216,
 			hidden: #if munit true #else false #end,
 			maximized: false,
 			minimized: false,
 			parameters: {},
 			resizable: true,
-			title: "FlxProject",
-			width: 640,
+			title: "Frogge Hell",
+			width: 288,
 			x: null,
 			y: null,
 		};
@@ -71,7 +71,7 @@ class ApplicationMain
 			hardware: true,
 			stencil: true,
 			type: null,
-			vsync: false
+			vsync: true
 		};
 
 		if (app.window == null)

@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map version="1.8" tiledversion="1.8.2" orientation="orthogonal" renderorder="left-down" width="9" height="36" tilewidth="32" tileheight="32" infinite="0" nextlayerid="10" nextobjectid="23">
+ <editorsettings>
+  <export target="../../../Resources/levels/level1/level1.csv" format="csv"/>
+ </editorsettings>
+ <tileset firstgid="1" source="tileset.tsx"/>
+ <tileset firstgid="6" source="Entities.tsx"/>
+ <layer id="1" name="background" width="9" height="36">
+  <properties>
+   <property name="tileset" value="tileset"/>
+  </properties>
+  <data encoding="csv">
+2,2,2,2,2,2,2,2,2,
+3,3,3,3,3,3,3,3,3,
+3,3,3,3,3,3,3,3,3,
+2,2,2,2,2,2,2,2,2,
+2,2,2,2,2,2,2,2,2,
+2,2,2,2,2,2,2,2,2,
+3,3,3,3,3,3,3,3,3,
+2,2,2,2,2,2,2,2,2,
+3,3,3,3,3,3,3,3,3,
+2,2,2,2,2,2,2,2,2,
+2,2,2,2,2,2,2,2,2,
+2,2,2,2,2,2,2,2,2,
+2,2,2,2,2,2,2,2,2,
+2,2,2,2,2,2,2,2,2,
+2,2,2,2,2,2,2,2,2,
+2,2,2,2,2,2,2,2,2,
+2,2,2,2,2,2,2,2,2,
+2,2,2,2,2,2,2,2,2,
+2,2,2,2,2,2,2,2,2,
+2,2,2,2,2,2,2,2,2,
+2,2,2,2,2,2,2,2,2,
+2,2,2,2,2,2,2,2,2,
+2,2,2,2,2,2,2,2,2,
+2,2,2,2,2,2,2,2,2,
+2,2,2,2,2,2,2,2,2,
+2,2,2,2,2,2,2,2,2,
+2,2,2,2,2,2,2,2,2,
+2,2,2,2,2,2,2,2,2,
+2,2,2,2,2,2,2,2,2,
+2,2,2,2,2,2,2,2,2,
+2,2,2,2,2,2,2,2,2,
+2,2,2,2,2,2,2,2,2,
+2,2,2,2,2,2,2,2,2,
+2,2,2,2,2,2,2,2,2,
+2,2,2,2,2,2,2,2,2,
+2,2,2,2,2,2,2,2,2
+</data>
+ </layer>
+</map>

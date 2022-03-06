@@ -85,16 +85,16 @@ class PlayState extends FlxActionState {
         FlxG.camera.scroll.y = level.height - camera.height;
         FlxG.camera.follow(player, TOPDOWN_TIGHT, 0.1);
         FlxG.camera.setScrollBounds(0, level.width, 0, level.height);
+        FlxG.worldBounds.set(0, 0, level.width, level.height);
     }
 
     override public function update(elapsed:Float) {
         super.update(elapsed);
         carGroup.update(elapsed);
         player.update(elapsed);
-        trace("PlayerX:" + player.x + " PlayerY: " + player.y);
+        // trace("PlayerX:" + player.x + " PlayerY: " + player.y);
         // trace("Rock0 X: " + objectGroup.members[0]. + " Rock0 Y: " + objectGroup.members[0].y));
-
-        // FlxG.collide(player, objectGroup);
+        FlxG.overlap(player, carGroup, onPlayerOverlapsCar); // FlxG.collide(player, objectGroup);
     }
 
     public function loadObjects(path:String):Bool {
@@ -117,7 +117,7 @@ class PlayState extends FlxActionState {
                     player.canMove = true;
                     add(player);
                 case "Rock":
-                    trace("Rock was found");
+                    // trace("Rock was found");
                     var rock:FlxSprite = new FlxSprite(Std.parseInt(params[1]) * tileHeight, Std.parseInt(params[2]) * tileHeight);
                     rock.loadGraphic("assets/images/Rock.png");
                     objectGroup.add(rock);
@@ -134,6 +134,10 @@ class PlayState extends FlxActionState {
         }
         add(objectGroup);
         return true;
+    }
+
+    function onPlayerOverlapsCar(player:FlxSprite, car:FlxSprite) {
+        trace('car hit');
     }
 }
 

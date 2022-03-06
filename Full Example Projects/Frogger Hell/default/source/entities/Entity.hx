@@ -34,6 +34,8 @@ class Entity extends FlxSprite {
             originY = y;
         } else if (!canMove) {
             currentLerp += lerpSpeed;
+            // trace(FlxMath.lerp(originX, targetX, currentLerp) - x);
+            // trace(targetX);
             x = FlxMath.lerp(originX, targetX, currentLerp);
             y = FlxMath.lerp(originY, targetY, currentLerp);
         }
@@ -42,7 +44,7 @@ class Entity extends FlxSprite {
             currentLerp = 1;
     }
 
-    public function moveToPos(newX:Float, newY:Float, speed:Float) {
+    public function moveToPos(newX:Float, newY:Float, sp:Float) {
         if (canMove) {
             canMove = false;
             originX = x;
@@ -50,7 +52,7 @@ class Entity extends FlxSprite {
             targetX = newX;
             targetY = newY;
             currentLerp = 0;
-            lerpSpeed = speed;
+            lerpSpeed = sp;
         }
     }
 

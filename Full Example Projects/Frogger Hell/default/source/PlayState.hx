@@ -64,7 +64,7 @@ class PlayState extends FlxActionState {
             var collection:FlxGroup = new FlxGroup(0);
             if (sp.direction == "RIGHT") {
                 for (i in 0...sp.amount) {
-                    var car = new Car(-tileWidth, sp.type, sp.direction, sp.yPos * tileHeight);
+                    var car = new Car(-tileWidth, sp.type, sp.direction, sp.yPos * tileHeight, 1.6);
                     car.x = Std.random(Std.int(level.width + tileWidth)) - tileWidth;
                     // collection.add(car);
                     carGroup.add(car);
@@ -72,7 +72,7 @@ class PlayState extends FlxActionState {
                 // add(car);
             } else {
                 for (i in 0...sp.amount) {
-                    var car = new Car(Std.int(level.width), sp.type, sp.direction, sp.yPos * tileHeight);
+                    var car = new Car(Std.int(level.width), sp.type, sp.direction, sp.yPos * tileHeight, 1.6);
                     car.x = Std.random(Std.int(level.width + tileWidth)) - tileWidth;
                     // collection.add(car);
                     carGroup.add(car);

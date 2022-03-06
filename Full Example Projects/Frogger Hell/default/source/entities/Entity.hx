@@ -9,7 +9,7 @@ class Entity extends FlxSprite {
     public var targetX:Float;
     public var targetY:Float;
 
-    var currentLerp:Float;
+    public var currentLerp:Float;
 
     public var canMove:Bool;
 
@@ -17,8 +17,13 @@ class Entity extends FlxSprite {
 
     public function new(startX:Int, startY:Int) {
         super(startX, startY);
+        originX = startX;
+        originY = startY;
         targetX = startX;
         targetY = startY;
+        currentLerp = 0;
+        canMove = true;
+        lerpSpeed = 0;
     }
 
     override function update(elapsed) {
@@ -32,16 +37,9 @@ class Entity extends FlxSprite {
             x = FlxMath.lerp(originX, targetX, currentLerp);
             y = FlxMath.lerp(originY, targetY, currentLerp);
         }
-        /*if (x == targetX && y == targetY) {
-                canMove = true;
-                currentLerp = 0;
-                originX = x;
-                originY = y;
-            } else {
-                currentLerp += lerpSpeed;
-                x = FlxMath.lerp(originX, targetX, currentLerp);
-                y = FlxMath.lerp(originY, targetY, currentLerp);
-        }*/
+
+        if (currentLerp > 1)
+            currentLerp = 1;
     }
 
     public function moveToPos(newX:Float, newY:Float, speed:Float) {
@@ -59,8 +57,6 @@ class Entity extends FlxSprite {
     public function resetPosition():Void {
         x = originX;
         y = originY;
-        targetX = originX;
-        targetY = originY;
         canMove = true;
     }
 }

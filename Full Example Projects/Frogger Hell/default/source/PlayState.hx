@@ -3,6 +3,7 @@ package;
 import entities.Car;
 import entities.Player;
 import flixel.FlxG;
+import flixel.FlxObject;
 import flixel.FlxSprite;
 import flixel.FlxState;
 import flixel.addons.editors.tiled.TiledLayer.TiledLayerType;
@@ -21,6 +22,8 @@ import utils.FlxActionState;
 import utils.FlxActionUIState;
 
 var player:Player;
+var playerStartX:Int;
+var playerStartY:Int;
 var level:FlxTilemapExt;
 
 // Basic Tilemap Info
@@ -58,34 +61,41 @@ class PlayState extends FlxActionState {
         loadObjects("assets/data/levels/level1/level1_objects.csv");
 
         for (sp in spawners) {
+            var collection:FlxGroup = new FlxGroup(0);
             if (sp.direction == "RIGHT") {
-                var car = new Car(0, sp.type, sp.direction, sp.yPos * tileHeight);
-                carGroup.add(car);
+                for (i in 0...sp.amount) {
+                    var car = new Car(-tileWidth, sp.type, sp.direction, sp.yPos * tileHeight);
+                    car.x = Std.random(Std.int(level.width + tileWidth)) - tileWidth;
+                    // collection.add(car);
+                    carGroup.add(car);
+                }
                 // add(car);
             } else {
-                var car = new Car(Std.int(level.width - tileWidth), sp.type, sp.direction, sp.yPos * tileHeight);
-                car.canMove = true;
-                carGroup.add(car);
+                for (i in 0...sp.amount) {
+                    var car = new Car(Std.int(level.width), sp.type, sp.direction, sp.yPos * tileHeight);
+                    car.x = Std.random(Std.int(level.width + tileWidth)) - tileWidth;
+                    // collection.add(car);
+                    carGroup.add(car);
+                }
                 // add(car);
+                // carGroup.add(collection);
             }
         }
         add(carGroup);
+        FlxG.camera.scroll.y = level.height - camera.height;
         FlxG.camera.follow(player, TOPDOWN_TIGHT, 0.1);
         FlxG.camera.setScrollBounds(0, level.width, 0, level.height);
-
-        // FlxG.collide(player, objectGroup);
     }
 
     override public function update(elapsed:Float) {
         super.update(elapsed);
         carGroup.update(elapsed);
+        player.update(elapsed);
         trace("PlayerX:" + player.x + " PlayerY: " + player.y);
         // trace("Rock0 X: " + objectGroup.members[0]. + " Rock0 Y: " + objectGroup.members[0].y));
 
         // FlxG.collide(player, objectGroup);
     }
-
-    public function moveObjectToPoint(object:FlxSprite, targetX:Int, targetY:Int) {}
 
     public function loadObjects(path:String):Bool {
         if (!Assets.exists(path)) {
@@ -100,7 +110,9 @@ class PlayState extends FlxActionState {
             switch (params[0]) {
                 case "Player":
                     trace("Player was found");
-                    player = new Player(Std.parseInt(params[1]) * tileWidth, Std.parseInt(params[2]) * tileHeight);
+                    playerStartX = Std.parseInt(params[1]) * tileWidth;
+                    playerStartY = Std.parseInt(params[2]) * tileHeight;
+                    player = new Player(playerStartX, playerStartY);
                     player.loadGraphic("assets/images/Player.png");
                     player.canMove = true;
                     add(player);
@@ -114,7 +126,8 @@ class PlayState extends FlxActionState {
                         collection: new FlxGroup(0),
                         type: params[1],
                         direction: params[2],
-                        yPos: Std.parseInt(params[3])
+                        yPos: Std.parseInt(params[3]),
+                        amount: Std.parseInt(params[4])
                     };
                     spawners.push(spawn);
             }
@@ -129,4 +142,5 @@ typedef Spawner = {
     var type:String;
     var direction:String;
     var yPos:Int;
+    var amount:Int;
 }

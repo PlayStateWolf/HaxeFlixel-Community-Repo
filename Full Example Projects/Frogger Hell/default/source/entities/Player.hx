@@ -31,7 +31,13 @@ class Player extends Entity {
                 this.moveToPos(x + PlayState.tileWidth, y, 0.2);
             }
         }
-        if (overlaps(PlayState.objectGroup, false))
+        if (overlaps(PlayState.objectGroup))
             resetPosition();
+        /*if (overlaps(PlayState.carGroup)) {
+            targetX = PlayState.playerStartX;
+            targetY = PlayState.playerStartY;
+            originX = targetX;
+            originY = targetY;
+        }*/
     }
 }

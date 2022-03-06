@@ -1,46 +1,65 @@
 package entities;
 
 import flixel.FlxG;
+import flixel.FlxObject;
 import flixel.FlxSprite;
 import flixel.group.FlxGroup;
+import flixel.math.FlxMath;
 import flixel.math.FlxPoint;
+import flixel.util.FlxTimer;
 
 class Car extends Entity {
     var type:String;
     var direction:String;
+    var delay:Int;
 
     public function new(startX:Int, t:String, d:String, startY:Int) {
         super(startX, startY);
         type = t;
         direction = d;
-        y = startY;
         loadGraphic("assets/images/Car.png");
-        flipX = true;
         canMove = true;
         if (direction == "RIGHT") {
             targetX = PlayState.level.width;
             targetY = y;
-        } else {
-            targetX = PlayState.level.width;
+            moveToPos(targetX, y, 0.005);
+        } else if (direction == "LEFT") {
+            targetX = -PlayState.tileWidth;
             targetY = y;
+            flipX = true;
+            moveToPos(targetX, y, 0.005);
         }
-        // moveToPos(targetX, targetY, 0.2);
+
+        currentLerp = Math.random();
     }
 
     override function update(elapsed) {
-        super.update(elapsed);
-        if (x == targetX && y == targetY)
+        if (delay > 0) {
+            delay--;
+            currentLerp = 0;
+        }
+        if (currentLerp == 1)
             resetPosition();
-        /*if (direction == "RIGHT") {
-                if (x > PlayState.level.width) {
-                    x = -PlayState.tileWidth;
-                }
-                velocity.x = 8;
-            } else {
-                if (x > PlayState.level.width) {
-                    x = -PlayState.tileWidth;
-                }
-                velocity.x = -8;
-        }*/
+
+        super.update(elapsed);
+        // carOverlap();
     }
+
+    override public function resetPosition():Void {
+        delay = Std.random(PlayState.tileWidth * 6);
+        currentLerp = 0;
+    }
+    /*public function carOverlap():Bool {
+        var isSeperate:Bool = false;
+        for (object in PlayState.carGroup) {
+            var car = cast(object, Car);
+            if (this.overlaps(car) && car != this) {
+                isSeperate = false;
+                FlxObject.separate(car, this);
+                if (carOverlap())
+                    isSeperate = true;
+            }
+        }
+        return isSeperate;
+    }*/
 }

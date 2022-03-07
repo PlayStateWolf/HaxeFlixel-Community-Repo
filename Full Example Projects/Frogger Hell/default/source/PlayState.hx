@@ -1,7 +1,10 @@
 package;
 
+import TrafficControl;
 import entities.Car;
+import entities.Entity;
 import entities.Player;
+import entities.Vehicle;
 import flixel.FlxG;
 import flixel.FlxObject;
 import flixel.FlxSprite;
@@ -35,10 +38,14 @@ var tileBorder:FlxPoint;
 var tileFrames:FlxTileFrames;
 var objectGroup:FlxGroup;
 var playerMoving:Bool;
-var spawners:Array<Spawner>;
 var carGroup:FlxGroup;
 
 class PlayState extends FlxActionState {
+    var traffic:TrafficControl;
+    var offScreenLeft:Int;
+
+    var offScreenRight:Int;
+
     override public function create() {
         super.create();
 
@@ -56,32 +63,12 @@ class PlayState extends FlxActionState {
         level.loadMapFromCSV("assets/data/levels/level1/level1.csv", tileFrames, 32, 32);
         add(level);
 
-        spawners = new Array<Spawner>();
+        offScreenLeft = -tileWidth;
+        offScreenRight = Std.int(level.width + tileWidth);
 
+        add(carGroup);
         loadObjects("assets/data/levels/level1/level1_objects.csv");
 
-        for (sp in spawners) {
-            var collection:FlxGroup = new FlxGroup(0);
-            if (sp.direction == "RIGHT") {
-                for (i in 0...sp.amount) {
-                    var car = new Car(-tileWidth, sp.type, sp.direction, sp.yPos * tileHeight, 1.6);
-                    car.x = Std.random(Std.int(level.width + tileWidth)) - tileWidth;
-                    // collection.add(car);
-                    carGroup.add(car);
-                }
-                // add(car);
-            } else {
-                for (i in 0...sp.amount) {
-                    var car = new Car(Std.int(level.width), sp.type, sp.direction, sp.yPos * tileHeight, 1.6);
-                    car.x = Std.random(Std.int(level.width + tileWidth)) - tileWidth;
-                    // collection.add(car);
-                    carGroup.add(car);
-                }
-                // add(car);
-                // carGroup.add(collection);
-            }
-        }
-        add(carGroup);
         FlxG.camera.scroll.y = level.height - camera.height;
         FlxG.camera.follow(player, TOPDOWN_TIGHT, 0.1);
         FlxG.camera.setScrollBounds(0, level.width, 0, level.height);
@@ -90,11 +77,8 @@ class PlayState extends FlxActionState {
 
     override public function update(elapsed:Float) {
         super.update(elapsed);
-        carGroup.update(elapsed);
-        player.update(elapsed);
-        // trace("PlayerX:" + player.x + " PlayerY: " + player.y);
-        // trace("Rock0 X: " + objectGroup.members[0]. + " Rock0 Y: " + objectGroup.members[0].y));
-        FlxG.overlap(player, carGroup, onPlayerOverlapsCar); // FlxG.collide(player, objectGroup);
+        traffic.update(elapsed);
+        FlxG.overlap(player, carGroup, onPlayerOverlapsCar);
     }
 
     public function loadObjects(path:String):Bool {
@@ -103,8 +87,11 @@ class PlayState extends FlxActionState {
             return false;
         }
         trace("PATH FOUND");
+        var spawners:Array<Spawner> = [];
         var lines = Assets.getText(path).split("\n");
         trace(lines);
+        // set spawnWithDebugValues to true for cars that would generate fast enough that they would overlap each other
+        var spawnWithDebugValues = false;
         for (line in lines) {
             var params = line.split(",");
             switch (params[0]) {
@@ -122,29 +109,52 @@ class PlayState extends FlxActionState {
                     rock.loadGraphic("assets/images/Rock.png");
                     objectGroup.add(rock);
                 case "Spawner":
-                    var spawn:Spawner = {
-                        collection: new FlxGroup(0),
-                        type: params[1],
-                        direction: params[2],
-                        yPos: Std.parseInt(params[3]),
-                        amount: Std.parseInt(params[4])
-                    };
-                    spawners.push(spawn);
+                    if (spawnWithDebugValues) {
+                        var spawn:Spawner = {
+                            collisionGroup: new FlxTypedGroup<Vehicle>(),
+                            type: params[1],
+                            direction: params[2],
+                            xPos: determineSpawnerX(params[2]),
+                            yPos: Std.parseInt(params[3]) * tileHeight,
+                            vehicleSpeed: 100,
+                            amount: Std.parseInt(params[4]),
+                            timeUntilNextSpawn: 0,
+                            delayBetweenSpawns: 0.05,
+                            assetPath: "assets/images/Car.png"
+                        }
+                        spawners.push(spawn);
+                    } else {
+                        var spawn:Spawner = {
+                            collisionGroup: new FlxTypedGroup<Vehicle>(),
+                            type: params[1],
+                            direction: params[2],
+                            xPos: determineSpawnerX(params[2]),
+                            yPos: Std.parseInt(params[3]) * tileHeight,
+                            vehicleSpeed: FlxG.random.float(25, 350),
+                            amount: Std.parseInt(params[4]),
+                            timeUntilNextSpawn: 0,
+                            delayBetweenSpawns: FlxG.random.float(0.05, 5),
+                            assetPath: "assets/images/Car.png"
+                        }
+                        spawners.push(spawn);
+                    }
             }
         }
+        traffic = new TrafficControl(spawners, carGroup);
         add(objectGroup);
         return true;
     }
 
-    function onPlayerOverlapsCar(player:FlxSprite, car:FlxSprite) {
-        trace('car hit');
-    }
-}
+    var playerGotHit:Bool = false;
 
-typedef Spawner = {
-    var collection:FlxGroup;
-    var type:String;
-    var direction:String;
-    var yPos:Int;
-    var amount:Int;
+    function onPlayerOverlapsCar(player:FlxSprite, car:FlxSprite) {
+        if (!playerGotHit) {
+            trace('car hit');
+            playerGotHit = true;
+        }
+    }
+
+    function determineSpawnerX(direction:String):Int {
+        return direction == "RIGHT" ? offScreenLeft : offScreenRight;
+    }
 }

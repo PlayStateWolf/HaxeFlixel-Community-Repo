@@ -21,27 +21,29 @@ class TrafficControl {
     public function update(elapsed:Float) {
         // update each spawner
         for (spawner in spawners) {
-            var shouldResetCountDown = false;
             // count down by elapsed time
             spawner.timeUntilNextSpawn -= elapsed;
 
-            // spawn if count down finished
+            // when count down finished, find a vehicle that is waiting and start it
             if (spawner.timeUntilNextSpawn <= 0) {
-                for (vehicle in spawner.collisionGroup) {
-                    if (shouldResetCountDown) {
-                        spawner.timeUntilNextSpawn = spawner.delayBetweenSpawns;
-                        break;
-                        // trace('reset spawn count down : $spawner');
-                    }
 
+                // loop over all vehicles belonging to spawner
+                for (vehicle in spawner.collisionGroup) {
+
+                    // find a vehicle that is waiting
                     if (vehicle.isWaiting) {
-                        // got a waiting vehicle
+
+                        // if vehicle does not overlap a moving one it can start
                         if (!overlapsMovingVehicle(vehicle, spawner.collisionGroup)) {
-                            // can start vehicle if it does not overlap a moving one
                             vehicle.start();
-                            shouldResetCountDown = true;
+                            // trace('started vehicle at ${vehicle.getPosition()}');
+
+                            // a vehicle was started so reset the count down
+                            spawner.timeUntilNextSpawn = spawner.delayBetweenSpawns;
+
+                            // break out of the loop so that only first waiting vehicle is started
+                            break;
                         }
-                        // trace('started vehicle at ${vehicle.getPosition()}');
                     }
                 }
             }
@@ -50,8 +52,8 @@ class TrafficControl {
 
     function overlapsMovingVehicle(vehicle:Vehicle, collisionGroup:FlxTypedGroup<Vehicle>):Bool {
         for (collidableVehicle in collisionGroup) {
-            var isComparingIdenticalVehicles = vehicle.ID == collidableVehicle.ID;
-            if (!isComparingIdenticalVehicles) {
+            var vehiclesAreTheSameInstance = vehicle.ID == collidableVehicle.ID;
+            if (!vehiclesAreTheSameInstance) {
                 if (collidableVehicle.isMoving() && collidableVehicle.overlaps(vehicle)) {
                     return true;
                 }

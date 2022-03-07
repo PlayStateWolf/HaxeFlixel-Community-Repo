@@ -63,7 +63,7 @@ class PlayState extends FlxActionState {
         level.loadMapFromCSV("assets/data/levels/level1/level1.csv", tileFrames, 32, 32);
         add(level);
 
-        offScreenLeft = -tileWidth;
+        offScreenLeft = 0 - tileWidth;
         offScreenRight = Std.int(level.width + tileWidth);
 
         add(carGroup);
@@ -79,6 +79,9 @@ class PlayState extends FlxActionState {
         super.update(elapsed);
         traffic.update(elapsed);
         FlxG.overlap(player, carGroup, onPlayerOverlapsCar);
+        if (FlxG.keys.justReleased.R) {
+            FlxG.resetState();
+        }
     }
 
     public function loadObjects(path:String):Bool {
@@ -91,7 +94,7 @@ class PlayState extends FlxActionState {
         var lines = Assets.getText(path).split("\n");
         trace(lines);
         // set spawnWithDebugValues to true for cars that would generate fast enough that they would overlap each other
-        var spawnWithDebugValues = false;
+        var spawnWithDebugValues = true;
         for (line in lines) {
             var params = line.split(",");
             switch (params[0]) {
@@ -109,32 +112,44 @@ class PlayState extends FlxActionState {
                     rock.loadGraphic("assets/images/Rock.png");
                     objectGroup.add(rock);
                 case "Spawner":
+                    var direction = params[2];
+                    var spawnerXPos = determineSpawnerX(direction);
+                    var spawnerYPos = Std.parseInt(params[3]) * tileHeight;
+                    var endDestinationX = determineVehicleFinalPositionX(direction);
+
+                    trace('new spawner: pointing $direction | x: $spawnerXPos | y: $spawnerYPos');
                     if (spawnWithDebugValues) {
+                        endDestinationX = tileWidth * 6;
                         var spawn:Spawner = {
                             collisionGroup: new FlxTypedGroup<Vehicle>(),
                             type: params[1],
-                            direction: params[2],
-                            xPos: determineSpawnerX(params[2]),
-                            yPos: Std.parseInt(params[3]) * tileHeight,
+                            direction: direction,
+                            xPos: spawnerXPos,
+                            yPos: spawnerYPos,
                             vehicleSpeed: 100,
                             amount: Std.parseInt(params[4]),
                             timeUntilNextSpawn: 0,
                             delayBetweenSpawns: 0.05,
-                            assetPath: "assets/images/Car.png"
+                            assetPath: "assets/images/Car.png",
+                            destinations: [
+                                new FlxPoint(endDestinationX, spawnerYPos),
+                                new FlxPoint(endDestinationX, spawnerYPos - (tileHeight * 3))
+                            ]
                         }
                         spawners.push(spawn);
                     } else {
                         var spawn:Spawner = {
                             collisionGroup: new FlxTypedGroup<Vehicle>(),
                             type: params[1],
-                            direction: params[2],
-                            xPos: determineSpawnerX(params[2]),
-                            yPos: Std.parseInt(params[3]) * tileHeight,
+                            direction: direction,
+                            xPos: spawnerXPos,
+                            yPos: spawnerYPos,
                             vehicleSpeed: FlxG.random.float(25, 350),
                             amount: Std.parseInt(params[4]),
                             timeUntilNextSpawn: 0,
                             delayBetweenSpawns: FlxG.random.float(0.05, 5),
-                            assetPath: "assets/images/Car.png"
+                            assetPath: "assets/images/Car.png",
+                            destinations: [new FlxPoint(endDestinationX, spawnerYPos)]
                         }
                         spawners.push(spawn);
                     }
@@ -155,6 +170,18 @@ class PlayState extends FlxActionState {
     }
 
     function determineSpawnerX(direction:String):Int {
-        return direction == "RIGHT" ? offScreenLeft : offScreenRight;
+        // if moving right the Spawner should be off screen to the left, otherwise off screen to the right
+        if (direction == "RIGHT") {
+            return offScreenLeft;
+        }
+        return offScreenRight;
+    }
+
+    function determineVehicleFinalPositionX(direction:String):Int {
+        // if moving right the Vehicle wants to end off screen to the right, otherwise off screen to the left
+        if (direction == "RIGHT") {
+            return offScreenRight + tileWidth;
+        }
+        return offScreenLeft - tileWidth;
     }
 }

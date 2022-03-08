@@ -2,6 +2,7 @@ package;
 
 import entities.Vehicle;
 import flixel.group.FlxGroup;
+import flixel.math.FlxPoint;
 
 class TrafficControl {
     var vehicleRenderGroup:FlxGroup;
@@ -26,13 +27,10 @@ class TrafficControl {
 
             // when count down finished, find a vehicle that is waiting and start it
             if (spawner.timeUntilNextSpawn <= 0) {
-
                 // loop over all vehicles belonging to spawner
                 for (vehicle in spawner.collisionGroup) {
-
                     // find a vehicle that is waiting
                     if (vehicle.isWaiting) {
-
                         // if vehicle does not overlap a moving one it can start
                         if (!overlapsMovingVehicle(vehicle, spawner.collisionGroup)) {
                             vehicle.start();
@@ -63,12 +61,7 @@ class TrafficControl {
     }
 
     function spawn(spawner:Spawner) {
-        var vehicleVelocity = spawner.vehicleSpeed;
-        if (spawner.direction == "LEFT") {
-            // if moving left, reverse the veleocity
-            vehicleVelocity *= -1;
-        }
-        var vehicle = new Vehicle(spawner.xPos, spawner.yPos, vehicleVelocity, spawner.assetPath);
+        var vehicle = new Vehicle(spawner.xPos, spawner.yPos, spawner.vehicleSpeed, spawner.assetPath, spawner.destinations);
         vehicleRenderGroup.add(vehicle);
         spawner.collisionGroup.add(vehicle);
     }
@@ -85,4 +78,5 @@ typedef Spawner = {
     var timeUntilNextSpawn:Float;
     var delayBetweenSpawns:Float;
     var assetPath:String;
+    var destinations:Array<FlxPoint>;
 }

@@ -161,14 +161,17 @@ class PlayState extends FlxActionState {
     }
 
     function onPlayerOverlapsCar(player:Player, car:FlxSprite) {
+        trace('overlap car, was it fatal?');
         if (!player.wasHit) {
-            trace('car hit');
-            player.wasHit = true;
-            FlxG.camera.shake(0.05, 0.1);
-            player.originX = playerStartX;
-            player.originY = playerStartY;
-            player.resetPosition();
-            player.wasHit = false;
+            player.wasHit = car.overlapsPoint(player.getMidpoint());
+            if (player.wasHit) {
+                trace('yes, car hit!');
+                FlxG.camera.shake(0.05, 0.1);
+                player.originX = playerStartX;
+                player.originY = playerStartY;
+                player.resetPosition();
+                player.wasHit = false;
+            }
         }
     }
 

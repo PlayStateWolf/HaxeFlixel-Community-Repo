@@ -188,7 +188,3 @@ class PlayState extends FlxActionState {
         return offScreenLeft - tileWidth;
     }
 }
-
-typedef PathData = {
-    var destinations:Array<FlxPoint>;
-}

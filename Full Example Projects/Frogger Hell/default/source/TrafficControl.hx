@@ -61,12 +61,7 @@ class TrafficControl {
     }
 
     function spawn(spawner:Spawner) {
-        var vehicleVelocity = spawner.vehicleSpeed;
-        if (spawner.direction == "LEFT") {
-            // if moving left, reverse the veleocity
-            vehicleVelocity *= -1;
-        }
-        var vehicle = new Vehicle(spawner.xPos, spawner.yPos, vehicleVelocity, spawner.assetPath, spawner.destinations);
+        var vehicle = new Vehicle(spawner.xPos, spawner.yPos, spawner.vehicleSpeed, spawner.assetPath, spawner.destinations);
         vehicleRenderGroup.add(vehicle);
         spawner.collisionGroup.add(vehicle);
     }

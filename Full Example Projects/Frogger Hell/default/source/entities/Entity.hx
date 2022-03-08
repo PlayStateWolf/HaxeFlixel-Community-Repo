@@ -15,6 +15,8 @@ class Entity extends FlxSprite {
 
     public var lerpSpeed:Float;
 
+    public var wasHit:Bool = false;
+
     public function new(startX:Int, startY:Int) {
         super(startX, startY);
         originX = startX;
@@ -60,5 +62,6 @@ class Entity extends FlxSprite {
         x = originX;
         y = originY;
         canMove = true;
+        currentLerp = 0;
     }
 }

@@ -56,3 +56,4 @@ Spawner,Car,RIGHT,8,2
 Spawner,Car,RIGHT,6,1
 Spawner,Car,LEFT,1,2
 Spawner,Car,LEFT,2,2
+Path, PATH0, [(10,10),(20,20),(30,30),(40,40),(50,50),(60,60)]

@@ -115,6 +115,8 @@ class PlayState extends FlxActionState {
                     var direction = params[2];
                     var spawnerXPos = determineSpawnerX(direction);
                     var spawnerYPos = Std.parseInt(params[3]) * tileHeight;
+                    // offset path y position because FlxPath will center an object on it and the sprite y is the top edge not center
+                    var pathY = spawnerYPos + (tileHeight * 0.5);
                     var endDestinationX = determineVehicleFinalPositionX(direction);
 
                     trace('new spawner: pointing $direction | x: $spawnerXPos | y: $spawnerYPos');
@@ -132,8 +134,8 @@ class PlayState extends FlxActionState {
                             delayBetweenSpawns: 0.05,
                             assetPath: "assets/images/Car.png",
                             destinations: [
-                                new FlxPoint(endDestinationX, spawnerYPos),
-                                new FlxPoint(endDestinationX, spawnerYPos - (tileHeight * 3))
+                                new FlxPoint(endDestinationX, pathY),
+                                new FlxPoint(endDestinationX, pathY - (tileHeight * 3))
                             ]
                         }
                         spawners.push(spawn);
@@ -161,14 +163,17 @@ class PlayState extends FlxActionState {
     }
 
     function onPlayerOverlapsCar(player:Player, car:FlxSprite) {
+        trace('overlap car, was it fatal?');
         if (!player.wasHit) {
-            trace('car hit');
-            player.wasHit = true;
-            FlxG.camera.shake(0.05, 0.1);
-            player.originX = playerStartX;
-            player.originY = playerStartY;
-            player.resetPosition();
-            player.wasHit = false;
+            player.wasHit = car.overlapsPoint(player.getMidpoint());
+            if (player.wasHit) {
+                trace('yes, car hit!');
+                FlxG.camera.shake(0.05, 0.1);
+                player.originX = playerStartX;
+                player.originY = playerStartY;
+                player.resetPosition();
+                player.wasHit = false;
+            }
         }
     }
 
@@ -187,8 +192,4 @@ class PlayState extends FlxActionState {
         }
         return offScreenLeft - tileWidth;
     }
-}
-
-typedef PathData = {
-    var destinations:Array<FlxPoint>;
 }
